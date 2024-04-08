@@ -1,0 +1,73 @@
+{% extends 'base.html' %}
+
+{% block content %}
+    {% for message in get_flashed_messages() %}
+        <div class="alert alert-success alert-dismissible fade show" role="alert">
+            <strong>{{ message }}</strong>
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    {% endfor %}
+
+    <h1>User List</h1>
+
+    <br>
+<div class="form-group">
+
+    <form action="/user/add" method="POST" class="row g-3">
+        <div class="col-auto">
+            {{ form.hidden_tag() }}
+            <div class="col-auto">
+                {{ form.name.label(class="form-label") }}
+                <p>{{ form.name(class="form-control", type="text") }}</p>
+            </div>
+            <div class="col-auto">
+                {{ form.email.label(class="form-label") }}
+                <p>{{ form.email(class="form-control", type="email") }}</p>
+            </div>
+            <div class="col-auto">
+                {{ form.submit(class="btn btn-secondary") }}
+            </div>
+        </div>
+    </form>
+</div>
+    <h2>List of users:</h2>
+  <table class="table table-hover table-bordered table-striped">
+    <tbody>
+        {% for u in users %}
+        <tr>
+            <td>
+                {{u.id}} <a href="{{url_for('update', id= u.id)}}">{{u.name}}</a>  {{u.email}}
+                <div class="btn-group">
+                    <button type="button" class="btn btn-danger btn-sm" data-bs-toggle="modal" data-bs-target="#deleteConfirmation{{ u.id }}">Delete</button>
+                </div>
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+
+
+    {% for u in users %}
+        <div class="modal fade" id="deleteConfirmation{{ u.id }}" tabindex="-1" aria-labelledby="deleteConfirmationLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="deleteConfirmationLabel">Confirmation</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        Are you sure you want to delete user  {{u.name}}?
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                        <form action="{{ url_for('delete_user', user_id=u.id) }}" method="POST" style="display: inline;">
+                            <button type="submit" class="btn btn-danger">Delete</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    {% endfor %}
+{% endblock %}
+
